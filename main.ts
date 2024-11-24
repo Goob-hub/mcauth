@@ -1,6 +1,6 @@
-import { registerCommands } from "./src/bot/commands.ts";
-import { getCurrentStates } from "./src/db/db.ts";
 import { seed } from "./src/db/seed.ts";
+import { registerCommands, startBot } from "./src/bot/bot.ts";
+import { startServer } from "./src/server/server.ts";
 
 const action = Deno.args[0];
 if (action === "register") {
@@ -21,13 +21,11 @@ if (action === "register") {
 } else if (action === "seed") {
   seed();
 } else if (action === "run") {
-  console.log(await getCurrentStates("1079492811126231051"))
+  await Promise.all([
+    startServer(),
+    startBot(Deno.env.get("BOT_TOKEN")!),
+  ])
 } else {
-  console.log("Example usage: deno run --env -A main.ts [register | run]");
+  console.log("Example usage: deno --env -A main.ts [register | run]");
   Deno.exit(1);
 }
-
-// deno run --env -A ./src/bot/commands.ts
-// deno run --env -A main.ts register
-// deno compile
-// ./mcauth.exe --env register

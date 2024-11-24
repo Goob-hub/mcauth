@@ -1,7 +1,12 @@
 import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { events, users } from "./schema.ts";
-import { eq } from "drizzle-orm/expressions";
+import { eq, gt, and } from "drizzle-orm/expressions";
+
+export type EventRecord = {
+  user_id: number,
+  guild_id: string,
+}
 
 // Use pg driver.
 const { Pool } = pg;
@@ -22,7 +27,7 @@ export async function linkAccount(minecraft_id: string, discord_id: string) {
   }).returning())[0];
 }
 
-export async function disallow(user_id: number, guild_id: string) {
+export async function disallow(guild_id: string, user_id: number) {
   return await db.insert(events).values({
     user_id: user_id,
     guild_id: guild_id,
@@ -30,7 +35,16 @@ export async function disallow(user_id: number, guild_id: string) {
   }).returning();
 }
 
-export async function allow(user_id: number, guild_id: string) {
+export async function disallowAll(records: EventRecord[]) {
+  return await db.insert(events).values(
+    records.map((record) => ({
+      ...record,
+      action: "disallow" as const 
+    }))
+  ).returning();
+}
+
+export async function allow( guild_id: string, user_id: number) {
   return await db.insert(events).values({
     user_id: user_id,
     guild_id: guild_id,
@@ -39,7 +53,7 @@ export async function allow(user_id: number, guild_id: string) {
 }
 
 export async function getUserByDiscordId(discord_id: string) {
-  return await db.select().from(users).where(eq(users.discord_id, discord_id));
+  return (await db.select().from(users).where(eq(users.discord_id, discord_id)))[0];
 }
 
 export async function getUserByMinecraftId(minecraft_id: string) {
@@ -52,8 +66,11 @@ export async function getUser(id: number) {
   return await db.select().from(users).where(eq(users.id, id)).execute();
 }
 
-export async function getCurrentStates(guildId: string) {
+export async function getCurrentState(guildId: string, cursor = 0) {
   return await db.selectDistinctOn([events.user_id]).from(events).where(
-    eq(events.guild_id, guildId),
-  ).leftJoin(users, eq(events.user_id, users.id)).execute();
+    and(
+      eq(events.guild_id, guildId),
+      gt(events.id, cursor)
+    )
+  ).innerJoin(users, eq(events.user_id, users.id)).execute();
 }
