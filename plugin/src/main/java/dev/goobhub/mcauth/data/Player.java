@@ -1,8 +1,8 @@
 package dev.goobhub.mcauth.data;
 
-import com.google.gson.JsonObject;
-
 import java.util.Objects;
+
+import com.google.gson.JsonObject;
 
 public class Player {
   public final String id;
@@ -10,7 +10,7 @@ public class Player {
   public final String action;
 
   public Player(JsonObject data) {
-    this.id = data.get("id").getAsString();
+    this.id = data.get("minecraft_id").getAsString();
     this.action = data.get("action").getAsString();
   }
 
