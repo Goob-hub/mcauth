@@ -1,4 +1,4 @@
-package dev.dylhack.mcauth.data;
+package dev.goobhub.mcauth.data;
 
 import com.google.gson.JsonObject;
 

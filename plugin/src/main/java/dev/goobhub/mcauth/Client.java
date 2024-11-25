@@ -1,6 +1,6 @@
-package dev.dylhack.mcauth;
+package dev.goobhub.mcauth;
 
-import dev.dylhack.mcauth.data.Player;
+import dev.goobhub.mcauth.data.Player;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 

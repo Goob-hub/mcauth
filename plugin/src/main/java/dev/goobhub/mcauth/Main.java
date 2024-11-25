@@ -1,4 +1,4 @@
-package dev.dylhack.mcauth;
+package dev.goobhub.mcauth;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
