@@ -1,0 +1,10 @@
+name: 'mcauth'
+api: 1.0.0
+version: '1.0.0'
+author: 'Goob'
+main: 'dev.goobhub.mcauth.Main'
+api-version: '1.20'
+commands:
+  whois:
+    description: Who is this on Discord?
+    usage: /whois <PlayerName>
